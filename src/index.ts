@@ -26,31 +26,16 @@ new Elysia()
         }),
     )
     .onBeforeHandle(async (ctx) => {
-        let body = null;
-        if (ctx.request.body) {
-            const text = await ctx.request.clone().text();
-            if (text) {
-                body = JSON.parse(text);
-            }
-        }
 
         ctx.log.info({
             msg: "HTTP Request",
             method: ctx.request.method,
             path: ctx.request.url,
             requestID: ctx.request.headers.get("X-Request-ID"),
-            body,
+            body: ctx.body,
         });
     })
     .mapResponse(async ({ responseValue, set, request, log }): Promise<Response | void> => {
-        let responseBody = null;
-        
-        if (responseValue instanceof Response) {
-            const text = await responseValue.clone().text();
-            if (text) {
-                responseBody = JSON.parse(text);
-            }
-        }
 
         log.info({
             level: 30,
@@ -60,7 +45,7 @@ new Elysia()
             path: request.url,
             requestID: request.headers.get("X-Request-ID"),
             status: set.status,
-            body: responseBody,
+            body: responseValue,
         });
     })
     .mount(auth.handler)
