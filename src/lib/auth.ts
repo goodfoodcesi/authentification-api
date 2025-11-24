@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import * as authSchema from "@/db/schemas/auth.schema";
+import { UserType } from "@/types/user_type.type";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI, organization } from "better-auth/plugins";
@@ -19,8 +20,10 @@ export const auth = betterAuth({
             userType: {
                 type: "string",
                 required: false,
-                defaultValue: "customer",
+                returned: true,
+                defaultValue: UserType.CUSTOMER,
             },
+        
         },
     },
     plugins: [
