@@ -1,9 +1,12 @@
 {
   "name": "api-authentification",
   "version": "1.0.50",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target=bun",
+    "start": "bun dist/index.js"
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.10",
