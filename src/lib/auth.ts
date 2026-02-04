@@ -7,6 +7,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI, organization } from "better-auth/plugins";
 import type { RedisKey } from "ioredis";
 
+
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
@@ -34,6 +35,9 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    advanced: {
+        disableOriginCheck: true,
+    },
     user: {
         additionalFields: {
             userType: {
@@ -48,5 +52,6 @@ export const auth = betterAuth({
     plugins: [
         openAPI(),
         organization(),
+        jwt()
     ],
 });

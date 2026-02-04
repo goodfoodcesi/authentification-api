@@ -6,8 +6,15 @@ import { Elysia } from "elysia";
 import { requestID } from "elysia-requestid";
 import { signUpController } from './features/sign-up/controller';
 import { auth } from './lib/auth';
+import { cors } from "@elysiajs/cors";
 
 new Elysia()
+    .use(cors({
+        origin: ["http://localhost:4000", "http://localhost"],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+    }))
     .use(openapi({
         documentation: {
             components: await OpenAPI.components,
