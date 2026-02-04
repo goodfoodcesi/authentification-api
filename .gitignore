@@ -45,3 +45,5 @@ postgres_data
 
 .idea
 .vscode
+
+redis_data
