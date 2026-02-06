@@ -73,12 +73,6 @@ jobs:
           git clone https://x-access-token:${PAT_TOKEN}@github.com/goodfoodcesi/goodfood-infra.git
           cd goodfood-infra
 
-          if [ "${BRANCH}" = "feat/jwks" ]; then
-            TARGET_BRANCH=main
-          else
-            TARGET_BRANCH=${BRANCH}
-          fi
-
           git checkout main || git checkout -b main
 
           # Aller dans le bon overlay
