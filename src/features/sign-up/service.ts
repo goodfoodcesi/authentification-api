@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { publishEvent } from "@/lib/rabbitmq";
 import { createErrorResponse, createSuccessResponse } from "@/utils/api-response";
 import { status } from "elysia";
 import type { DriverSignUpBody, SignUpBody } from "./models";
@@ -20,7 +21,7 @@ export abstract class SignUpService {
           userType: userType,
         },
       });
-      
+
       if (!signUpResult?.user) {
         return status(400, createErrorResponse("Failed to create user account"));
       }
@@ -54,10 +55,21 @@ export abstract class SignUpService {
           userType: "driver",
         },
       });
-      
+
       if (!signUpResult?.user) {
         return status(400, createErrorResponse("Failed to create user account"));
       }
+
+      // Publish driver.created event to RabbitMQ
+      await publishEvent('drivers', {
+        event: 'driver.created',
+        data: {
+          driverId: signUpResult.user.id,
+          name: signUpResult.user.name,
+          email: signUpResult.user.email,
+          createdAt: signUpResult.user.createdAt.toISOString(),
+        }
+      });
 
       return status(201, createSuccessResponse({
         id: signUpResult.user.id,

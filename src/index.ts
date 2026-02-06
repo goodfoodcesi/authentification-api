@@ -1,11 +1,16 @@
 import { OpenAPI } from "@/auth.openapi";
 import { logger } from "@bogeychan/elysia-logger";
 import type { ElysiaLoggerContext } from "@bogeychan/elysia-logger/types";
+import { cors } from "@elysiajs/cors";
 import { openapi } from "@elysiajs/openapi";
 import { Elysia } from "elysia";
 import { requestID } from "elysia-requestid";
 import { signUpController } from './features/sign-up/controller';
 import { auth } from './lib/auth';
+import { connectRabbitMQ } from './lib/rabbitmq';
+
+// Initialize RabbitMQ
+connectRabbitMQ().catch(console.error);
 
 new Elysia()
     .use(openapi({
@@ -15,6 +20,10 @@ new Elysia()
         },
     }))
     .use(requestID())
+    .use(cors({
+        origin: true,
+        credentials: true,
+    }))
     .use(
         logger({
             autoLogging: false,
@@ -36,7 +45,7 @@ new Elysia()
     .onAfterHandle(async (ctx) => {
         let body = ctx.responseValue;
         if ((!body || Object.keys(body).length === 0) && ctx.response instanceof Response) {
-            try { body = await ctx.response.clone().json(); } catch {}
+            try { body = await ctx.response.clone().json(); } catch { }
         }
         ctx.log.info({ msg: "HTTP Response", method: ctx.request.method, path: ctx.request.url, status: ctx.set.status, body });
     })
